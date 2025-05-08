@@ -152,7 +152,7 @@ function addMessage(sender, text) {
 
     let icon = document.createElement("img");
     icon.classList.add("icon");
-    icon.src = sender === "user" ? "https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-7-512.png" : "https://mitra.ayushacharya5.com.np/images/icon.png";
+    icon.src = sender === "user" ? "https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-7-512.png" : "images/icon.png";
 
     let bubble = document.createElement("div");
     bubble.classList.add("bubble");
