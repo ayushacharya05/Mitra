@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MITRA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="/manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;550&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background: #f1f3f5;
+            overflow: hidden;
+        }
+
+        .app {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            height: 70px;
+            padding: 1rem;
+            text-align: center;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            flex-shrink: 0;
+        }
+        .header h1 {
+            font-weight: 550;
+            font-size: 28px;
+            margin: 0;
+            background: linear-gradient(90deg, #111, #555);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .chat-area {
+            position: absolute;
+            top: 70px;
+            left: 8px;
+            right: 8px;
+            bottom: 70px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f9f9fb;
+            border-radius: 20px 20px 0 0;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            scroll-behavior: smooth;
+        }
+        .chat-box {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .input-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.75rem 1rem;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 -1px 8px rgba(0,0,0,0.05);
+        }
+        .input-bar .btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .input-bar .btn-speaker {
+            background: #e0e0e0;
+            color: #666;
+        }
+        .input-bar .btn-send {
+            background: #1976d2;
+            color: white;
+        }
+        .input-bar .form-control {
+            flex: 1;
+            border-radius: 24px;
+            padding: 0.6rem 1rem;
+            font-size: 0.95rem;
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+
+        /* KEBAB MENU */
+        #kebab-menu {
+            position: absolute;
+            top: 58px;
+            right: 16px;
+            width: 138px;
+            background: #f9f9f9;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            transition: all 0.15s ease;
+            z-index: 1050;
+        }
+        #kebab-menu.show {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        .kebab-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            color: #333;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.4;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .kebab-item:hover {
+            background: #f0f0f0;
+        }
+        .kebab-item i {
+            font-size: 0.85rem;
+            width: 16px;
+            text-align: center;
+            color: #666;
+        }
+        .kebab-item .fa-info-circle { color: #0d6efd; }
+        .kebab-item .fa-headset { color: #17a2b8; }
+
+        /* ABOUT MODAL — BIGGER & CLEAN */
+        #aboutOverlay {
+            display: none;
+            position: fixed;
+            top: 1%;
+            left: 5%;
+            right: 5%;
+            bottom: 0%;
+            z-index: 2000;
+            width: 90%;
+            height: 90%;
+            max-width: none;
+            max-height: none;
+        }
+        #aboutOverlay.show { display: block; }
+
+        .about-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.8rem;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .about-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        .about-header h5 {
+            font-weight: 600;
+            font-size: 1.15rem;
+            margin: 0;
+            color: #000;
+        }
+        .about-header .btn-close {
+            font-size: 1.6rem;
+            font-weight: 300;
+            color: #000;
+            opacity: 0.7;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .about-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 1.2rem;
+        }
+        .about-info img {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            object-fit: contain;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+        .about-info div strong {
+            font-size: 1.15rem;
+            display: block;
+            color: #000;
+            font-weight: 500;
+        }
+        .about-info div small {
+            color: #666;
+            font-size: 0.78rem;
+        }
+
+        .about-card p {
+            color: #555;
+            margin-bottom: 1.2rem;
+            line-height: 1.45;
+            font-size: 0.82rem;
+        }
+
+        .about-card ul {
+            padding-left: 1.3rem;
+            margin: 0.6rem 0 1.2rem;
+            font-size: 0.78rem;
+            color: #555;
+            list-style: disc;
+            line-height: 1.45;
+        }
+        .about-card ul li {
+            margin-bottom: 0.4rem;
+        }
+
+        .about-card hr {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 1.2rem 0;
+        }
+
+        .about-card .text-center {
+            font-size: 0.72rem;
+            color: #999;
+            margin-top: auto;
+        }
+
+        /* MESSAGES — MEDIUM & GOOD SIZE (14px) */
+        .welcome-msg, .user-msg, .ai-msg {
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            font-size: 0.875rem; /* ~14px — MEDIUM & READABLE */
+            max-width: 80%;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            margin-bottom: 0.5rem;
+            line-height: 1.45;
+        }
+        .welcome-msg {
+            background: #e3f2fd;
+            color: #1565c0;
+            align-self: flex-start;
+        }
+        .user-msg {
+            background: #1976d2;
+            color: white;
+            align-self: flex-end;
+        }
+        .ai-msg {
+            background: white;
+            color: #333;
+            align-self: flex-start;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <div class="header">
+        <a href="https://ayushacharya5.com.np/mitra" style="text-decoration:none;">
+            <h1>MITRA</h1>
+        </a>
+    </div>
+
+    <div class="chat-area" id="chatArea">
+        <div class="chat-box" id="chatBox">
+            <!-- Messages injected here -->
+        </div>
+    </div>
+
+    <div class="input-bar">
+        <button class="btn btn-speaker" id="speechToggleBtn" onclick="toggleSpeech()">
+            <i class="fas fa-volume-up"></i>
+        </button>
+        <input type="text" id="question" class="form-control" placeholder="Type a message..." onkeypress="if(event.key==='Enter') askAI()">
+        <button class="btn btn-send" onclick="askAI()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<!-- KEBAB MENU -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index:1050;">
+    <button id="kebab-btn" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+            style="width:44px;height:44px;">
+        <i class="fas fa-ellipsis-v" style="font-size:1.25rem;color:#555;"></i>
+    </button>
+
+    <div id="kebab-menu">
+        <a href="javascript:void(0)" class="kebab-item" id="aboutLink">
+            <i class="fas fa-info-circle"></i> About
+        </a>
+        <a href="mailto:contact@ayushacharya5.com.np" class="kebab-item">
+            <i class="fas fa-headset"></i> Support
+        </a>
+    </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div id="aboutOverlay">
+    <div class="about-card">
+        <div class="about-header">
+            <h5>About Mitra AI</h5>
+            <button class="btn-close" id="closeAbout">X</button>
+        </div>
+        <div class="about-info">
+            <img src="https://ayushacharya5.com.np/mitra/images/icon.png" alt="Mitra AI">
+            <div>
+                <strong>Mitra</strong>
+                <small>v1.0.3 • Made in Nepal</small>
+            </div>
+        </div>
+        <p>Your intelligent Nepali AI companion — built to help, entertain, and inform with a touch of local soul.</p>
+        <ul>
+            <li>App Developed by <strong>Ayush Acharya</strong></li>
+            <li>First AI app from Nepal with full <strong>Nepali language support</strong></li>
+            <li>Expert on <strong>Nepal, history, places & culture</strong></li>
+            <li>Knows global <strong>tech, science & world facts</strong></li>
+            <li>Tells <strong>jokes, riddles, cheers you up & consoles</strong></li>
+        </ul>
+        <hr>
+        <div class="text-center">© 2025 Mitra AI. All rights reserved.</div>
+    </div>
+</div>
+
+<script>
+    const chatBox = document.getElementById('chatBox');
+    const chatArea = document.getElementById('chatArea');
+    const questionInput = document.getElementById('question');
+
+    // === AUTO-SCROLL ===
+    function scrollToBottom() {
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // === WELCOME MESSAGE ===
+    const userLang = (navigator.language || navigator.userLanguage).toLowerCase();
+    const welcomeEnglish = `
+        <div class="welcome-msg">
+            Namaste! I'm <strong>Mitra</strong>, your intelligent Nepali AI companion. 
+            Ask me anything in English or Nepali!
+        </div>`;
+    const welcomeNepali = `
+        <div class="welcome-msg">
+            नमस्ते! म <strong>मित्र</strong> हुँ, तपाईंको बुद्धिमान नेपाली AI साथी। 
+            अंग्रेजी वा नेपालीमा कुनै पनि कुरा सोध्नुहोस्!
+        </div>`;
+
+    chatBox.innerHTML = userLang.includes('ne') ? welcomeNepali : welcomeEnglish;
+    setTimeout(scrollToBottom, 100);
+
+    // === ASK AI (DEMO) ===
+    function askAI() {
+        const q = questionInput.value.trim();
+        if (!q) return;
+
+        const userMsg = document.createElement('div');
+        userMsg.className = 'user-msg';
+        userMsg.textContent = q;
+        chatBox.appendChild(userMsg);
+
+        questionInput.value = '';
+        scrollToBottom();
+
+        setTimeout(() => {
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'ai-msg';
+            aiMsg.innerHTML = `You said: "<strong>${q}</strong>"<br><br>Demo response. Replace with real AI!`;
+            chatBox.appendChild(aiMsg);
+            scrollToBottom();
+        }, 600);
+    }
+
+    // === KEBAB & MODAL LOGIC ===
+    const kebabBtn = document.getElementById('kebab-btn');
+    const kebabMenu = document.getElementById('kebab-menu');
+    const aboutOverlay = document.getElementById('aboutOverlay');
+    const aboutLink = document.getElementById('aboutLink');
+    const closeAbout = document.getElementById('closeAbout');
+
+    kebabBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        kebabMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => {
+        kebabMenu.classList.remove('show');
+    });
+
+    aboutLink.addEventListener('click', () => {
+        kebabMenu.classList.remove('show');
+        aboutOverlay.classList.add('show');
+    });
+
+    closeAbout.addEventListener('click', () => {
+        aboutOverlay.classList.remove('show');
+    });
+
+    aboutOverlay.addEventListener('click', (e) => {
+        if (e.target === aboutOverlay) aboutOverlay.classList.remove('show');
+    });
+
+    questionInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') askAI();
+    });
+
+    // === AUTO-SCROLL ON EVERY MESSAGE ===
+    const observer = new MutationObserver(scrollToBottom);
+    observer.observe(chatBox, { childList: true, subtree: true });
+
+    window.addEventListener('load', () => setTimeout(scrollToBottom, 200));
+</script>
+
+<script src="script.js"></script>
+</body>
+</html>
