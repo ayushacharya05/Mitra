@@ -3,346 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MITRA AI - Desktop</title>
+    <title>MITRA AI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;550&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;550&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --sidebar-bg: #171717;
-            --main-bg: #ffffff;
-            --user-bubble: #007aff;
-            --ai-bubble: #f4f4f9;
-        }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html {
+        html, body {
             height: 100%;
             font-family: 'Montserrat', sans-serif;
-            background: var(--main-bg);
+            background: #f1f3f5;
             overflow: hidden;
         }
 
-        .app-container {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: var(--sidebar-bg);
-            color: #ececec;
+        /* Desktop Container */
+        .app {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            max-width: 900px; /* Wider for Desktop */
+            margin: 0 auto;
+            background: white;
             display: flex;
             flex-direction: column;
-            padding: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .new-chat-btn {
-            border: 1px solid #4d4d4d;
-            background: transparent;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: left;
-            margin-bottom: 20px;
-            transition: 0.2s;
-        }
-        .new-chat-btn:hover { background: #2d2d2d; }
-
-        /* Main Chat Area */
-        .chat-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
         .header {
-            padding: 15px 30px;
-            border-bottom: 1px solid #efefef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            height: 70px;
+            padding: 1rem;
+            text-align: center;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            flex-shrink: 0;
         }
-
         .header h1 {
-            font-size: 22px;
             font-weight: 550;
-            background: linear-gradient(90deg, #111, #666);
+            font-size: 28px;
+            margin: 0;
+            background: linear-gradient(90deg, #111, #555);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .chat-box {
-            flex: 1;
+        .chat-area {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 80px;
             overflow-y: auto;
-            padding: 40px 10%;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
+            padding: 1.5rem;
+            background: #f9f9fb;
             scroll-behavior: smooth;
         }
-
-        /* Messages */
-        .message {
+        .chat-box {
             display: flex;
-            gap: 15px;
-            max-width: 850px;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 800px;
             margin: 0 auto;
-            width: 100%;
         }
 
-        .message.user { justify-content: flex-end; }
-        
-        .message .icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            object-fit: cover;
-            flex-shrink: 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .bubble {
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-size: 15px;
-            line-height: 1.6;
-            max-width: 75%;
-            word-wrap: break-word;
-        }
-
-        .user .bubble {
-            background-color: var(--user-bubble);
-            color: white;
-            border-bottom-right-radius: 2px;
-        }
-
-        .ai .bubble {
-            background-color: var(--ai-bubble);
-            color: #222;
-            border: 1px solid #e5e5e5;
-            border-bottom-left-radius: 2px;
-        }
-
-        /* Input area */
-        .input-area {
-            padding: 20px 10% 40px 10%;
-            background: linear-gradient(transparent, white 40%);
-        }
-
-        .input-container {
-            max-width: 850px;
-            margin: 0 auto;
+        .input-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #eee;
             display: flex;
             align-items: center;
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 14px;
-            padding: 10px 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            gap: 0.75rem;
         }
 
-        .input-container input {
-            flex: 1;
+        /* Buttons */
+        .btn-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border: none;
-            outline: none;
-            padding: 8px;
-            font-size: 16px;
+            transition: 0.3s;
         }
-
-        .control-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px 10px;
-            font-size: 18px;
-            transition: 0.2s;
-        }
+        .btn-speaker { background: #e0e0e0; color: #666; }
+        .btn-speaker.on { background: #28a745; color: white; }
+        .btn-send { background: #1976d2; color: white; }
         
-        .on { color: #28a745; }
-        .off { color: #ccc; }
+        .form-control {
+            border-radius: 24px;
+            padding: 0.7rem 1.2rem;
+            border: 1px solid #ddd;
+        }
+
+        /* Message Bubbles */
+        .user-msg, .ai-msg {
+            padding: 0.8rem 1.2rem;
+            border-radius: 18px;
+            font-size: 1rem;
+            max-width: 80%;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .user-msg {
+            background: #1976d2;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .ai-msg {
+            background: white;
+            color: #333;
+            align-self: flex-start;
+            border: 1px solid #eee;
+            border-bottom-left-radius: 2px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .ai-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        /* Kebab & About */
+        #kebab-menu {
+            position: fixed;
+            top: 60px; right: 20px;
+            width: 150px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 2000;
+        }
+        #kebab-menu.show { display: block; }
+        .kebab-item {
+            padding: 10px 15px;
+            display: block;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+        .kebab-item:hover { background: #f5f5f5; }
 
         #aboutOverlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 1000;
+            z-index: 3000;
         }
         .about-card {
             background: white;
-            width: 450px;
-            padding: 30px;
+            width: 400px;
+            padding: 2rem;
             border-radius: 20px;
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
         }
-
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .chat-box { padding: 20px 5%; }
-        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="sidebar">
-        <button class="new-chat-btn" onclick="window.location.reload()"><i class="fas fa-plus me-2"></i> New Chat</button>
-        <div class="flex-grow-1"></div>
-        <hr style="border-color: #333;">
-        <button class="btn text-light text-start p-2" onclick="toggleAbout()"><i class="fas fa-info-circle me-2"></i> About Mitra</button>
-        <button class="btn text-light text-start p-2"><i class="fas fa-envelope me-2"></i> Support</button>
+<div class="app">
+    <div class="header">
+        <a href="#" style="text-decoration:none;"><h1>MITRA</h1></a>
     </div>
 
-    <div class="chat-wrapper">
-        <div class="header">
-            <h1>MITRA</h1>
-            <div id="status" class="small text-muted">Ready</div>
-        </div>
-
+    <div class="chat-area" id="chatArea">
         <div class="chat-box" id="chatBox"></div>
+    </div>
 
-        <div class="input-area">
-            <div class="input-container">
-                <button class="control-btn off" id="speechToggleBtn" onclick="toggleSpeech()" title="Toggle Voice Output">
-                    <i class="fas fa-volume-up"></i>
-                </button>
-                <button class="control-btn" onclick="startVoiceInput()" title="Voice Input">
-                    <i class="fas fa-microphone text-primary"></i>
-                </button>
-                <input type="text" id="question" placeholder="Ask Mitra anything..." onkeypress="if(event.key==='Enter') askAI()">
-                <button class="control-btn text-primary" onclick="askAI()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
+    <div class="input-bar">
+        <button class="btn-circle btn-speaker" id="speechToggleBtn" onclick="toggleSpeech()">
+            <i class="fas fa-volume-up"></i>
+        </button>
+        <input type="text" id="question" class="form-control" placeholder="Ask me anything..." onkeypress="if(event.key==='Enter') askAI()">
+        <button class="btn-circle btn-send" onclick="askAI()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
 </div>
 
-<div id="aboutOverlay" onclick="toggleAbout()">
-    <div class="about-card" onclick="event.stopPropagation()">
-        <h3>About Mitra AI</h3>
-        <p class="mt-3">A specialized AI companion optimized for Nepali users.</p>
-        <ul class="mt-2 small">
-            <li>Developed by <strong>Ayush Acharya</strong></li>
-            <li>Real-time Web Search</li>
-            <li>Nepali & English Support</li>
-        </ul>
-        <button class="btn btn-dark w-100 mt-4" onclick="toggleAbout()">Close</button>
+<div class="position-fixed top-0 end-0 p-3" style="z-index:2050;">
+    <button id="kebab-btn" class="btn btn-light shadow-sm rounded-circle" style="width:40px; height:40px;">
+        <i class="fas fa-ellipsis-v"></i>
+    </button>
+    <div id="kebab-menu">
+        <a href="javascript:void(0)" class="kebab-item" onclick="showAbout()">About</a>
+        <a href="mailto:support@example.com" class="kebab-item">Support</a>
+    </div>
+</div>
+
+<div id="aboutOverlay">
+    <div class="about-card text-center">
+        <img src="https://raw.githubusercontent.com/ayushacharya05/Mitra/refs/heads/main/images/icon.png" width="60" class="mb-3">
+        <h5>Mitra AI v1.0.3</h5>
+        <p class="small text-muted">Created by Ayush Acharya</p>
+        <hr>
+        <p class="small">The first intelligent AI from Nepal with full local language support.</p>
+        <button class="btn btn-dark btn-sm w-100 mt-3" onclick="hideAbout()">Close</button>
     </div>
 </div>
 
 <script>
+    const chatBox = document.getElementById('chatBox');
+    const chatArea = document.getElementById('chatArea');
+    const questionInput = document.getElementById('question');
+    const AI_ICON = "https://raw.githubusercontent.com/ayushacharya05/Mitra/refs/heads/main/images/icon.png";
+    
     let isSpeechEnabled = false;
-    // Your updated AI Icon URL
-    const AI_ICON_URL = "https://raw.githubusercontent.com/ayushacharya05/Mitra/refs/heads/main/images/icon.png";
-    const USER_ICON_URL = "https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-7-512.png";
 
+    // --- Core Logic ---
     function toggleSpeech() {
         isSpeechEnabled = !isSpeechEnabled;
-        const btn = document.getElementById("speechToggleBtn");
+        const btn = document.getElementById('speechToggleBtn');
         btn.classList.toggle('on', isSpeechEnabled);
-        btn.classList.toggle('off', !isSpeechEnabled);
-    }
-
-    function toggleAbout() {
-        const modal = document.getElementById('aboutOverlay');
-        modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
-    }
-
-    function fuzzyMatch(input, target) {
-        return input.toLowerCase().split(" ").every(word => target.toLowerCase().includes(word));
-    }
-
-    async function fetchWebSearchResult(query) {
-        document.getElementById('status').innerText = "Searching web...";
-        const apiUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json`;
-        try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            document.getElementById('status').innerText = "Ready";
-            return data.AbstractText || "I couldn't find a direct answer. Try asking differently!";
-        } catch (e) {
-            return "Connection error. Please check your internet.";
-        }
-    }
-
-    const predefinedAnswers = [
-        { "keywords": ["hello", "hi", "hey"], "answer": "Hi! How can I assist you today?\nनमस्ते! म तपाईंलाई आज के सहयोग गर्न सक्छु?" },
-        { "keywords": ["who are you", "name"], "answer": "I'm Mitra, your AI friend, created by Ayush Acharya." },
-        { "keywords": ["who developed you", "creator"], "answer": "I was created by Ayush Acharya." }
-    ];
-
-    function getFlexibleAnswer(question) {
-        for (let item of predefinedAnswers) {
-            for (let keyword of item.keywords) {
-                if (fuzzyMatch(question, keyword)) return item.answer;
-            }
-        }
-        return null;
-    }
-
-    async function askAI() {
-        const input = document.getElementById("question");
-        const query = input.value.trim();
-        if (!query) return;
-
-        addMessage("user", query);
-        input.value = "";
-
-        let response = getFlexibleAnswer(query) || await fetchWebSearchResult(query);
-
-        setTimeout(() => {
-            addMessage("ai", response);
-            if (isSpeechEnabled) speakText(response);
-        }, 500);
     }
 
     function addMessage(sender, text) {
-        const chatBox = document.getElementById("chatBox");
-        const msgDiv = document.createElement("div");
-        msgDiv.className = `message ${sender}`;
-
-        const iconUrl = (sender === 'ai') ? AI_ICON_URL : USER_ICON_URL;
-
-        msgDiv.innerHTML = `
-            ${sender === 'ai' ? `<img src="${iconUrl}" class="icon">` : ''}
-            <div class="bubble">${text}</div>
-            ${sender === 'user' ? `<img src="${iconUrl}" class="icon">` : ''}
-        `;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = sender === 'user' ? 'user-msg' : 'ai-msg';
+        
+        if (sender === 'ai') {
+            msgDiv.innerHTML = `<img src="${AI_ICON}" class="ai-icon"><span>${text}</span>`;
+        } else {
+            msgDiv.textContent = text;
+        }
 
         chatBox.appendChild(msgDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    function startVoiceInput() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return alert("Browser does not support voice input.");
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.onstart = () => document.getElementById('status').innerText = "Listening...";
-        recognition.onresult = (event) => {
-            document.getElementById("question").value = event.results[0][0].transcript;
-            askAI();
-        };
-        recognition.onend = () => document.getElementById('status').innerText = "Ready";
-        recognition.start();
+    async function fetchWebResult(query) {
+        try {
+            const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json`);
+            const data = await res.json();
+            return data.AbstractText || "I couldn't find a direct answer. Try asking differently!";
+        } catch (e) { return "Search failed. Check your connection."; }
     }
 
-    function speakText(text) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = /[\u0900-\u097F]/.test(text) ? 'hi-IN' : 'en-US';
-        window.speechSynthesis.speak(utterance);
+    function getPredefined(query) {
+        const pairs = [
+            { k: ["hi", "hello", "नमस्ते"], a: "Namaste! I am Mitra. How can I help you?" },
+            { k: ["who made you", "creator"], a: "I was created by Ayush Acharya." },
+            { k: ["joke"], a: "Why did the computer go to the doctor? It had a virus!" }
+        ];
+        const match = pairs.find(p => p.k.some(key => query.toLowerCase().includes(key)));
+        return match ? match.a : null;
     }
 
-    window.onload = () => addMessage("ai", "Namaste! I am Mitra. How can I help you today?");
+    async function askAI() {
+        const query = questionInput.value.trim();
+        if (!query) return;
+
+        addMessage('user', query);
+        questionInput.value = '';
+
+        let response = getPredefined(query) || await fetchWebResult(query);
+        
+        setTimeout(() => {
+            addMessage('ai', response);
+            if (isSpeechEnabled) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(response);
+                u.lang = /[\u0900-\u097F]/.test(response) ? 'hi-IN' : 'en-US';
+                window.speechSynthesis.speak(u);
+            }
+        }, 500);
+    }
+
+    // --- UI Logic ---
+    function showAbout() { document.getElementById('aboutOverlay').style.display = 'block'; }
+    function hideAbout() { document.getElementById('aboutOverlay').style.display = 'none'; }
+    
+    document.getElementById('kebab-btn').onclick = (e) => {
+        e.stopPropagation();
+        document.getElementById('kebab-menu').classList.toggle('show');
+    };
+    document.onclick = () => document.getElementById('kebab-menu').classList.remove('show');
+
+    // Welcome
+    window.onload = () => addMessage('ai', 'Namaste! I am your AI companion Mitra. Ask me anything in English or Nepali.');
 </script>
 </body>
 </html>
