@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mitra AI – Your Intelligent Companion</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0a0a0f;
+      --paper: #f5f3ee;
+      --gold: #c8a96e;
+      --gold-light: #e8c98a;
+      --teal: #2a9d8f;
+      --accent: #e76f51;
+      --muted: #8a8478;
+      --border: #d4cfc5;
+      --chat-bg: #faf8f4;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Sora', 'Noto Sans Devanagari', sans-serif;
+      background: var(--ink); color: var(--paper); overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.1rem 2.5rem; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(200,169,110,.15);
+      background: rgba(10,10,15,.88); backdrop-filter: blur(20px);
+    }
+    .nav-brand { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .brand-dot { width: 30px; height: 30px; border-radius: 50%; background: conic-gradient(var(--gold), var(--teal), var(--gold)); animation: spin 6s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: var(--paper); }
+    .brand-name span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: .82rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--ink) !important; padding: .42rem 1.1rem; border-radius: 2rem; font-weight: 700 !important; transition: background .2s, transform .15s !important; }
+    .nav-cta:hover { background: var(--gold-light) !important; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: grid; place-items: center;
+      padding: 8rem 1.5rem 4rem; position: relative; text-align: center;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(42,157,143,.18) 0%, transparent 70%), radial-gradient(ellipse 40% 30% at 80% 60%, rgba(200,169,110,.1) 0%, transparent 60%), var(--ink);
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(200,169,110,.1); border: 1px solid rgba(200,169,110,.25);
+      border-radius: 2rem; padding: .32rem .9rem;
+      font-size: .73rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 2rem; animation: fadeUp .8s ease both;
+    }
+    .hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+    h1.hero-title { font-size: clamp(3rem,8vw,6.2rem); font-weight: 800; line-height: 1.05; letter-spacing: -.03em; animation: fadeUp .9s .1s ease both; }
+    h1.hero-title .line-gold { color: var(--gold); }
+    h1.hero-title .line-teal { color: var(--teal); }
+    .hero-sub { max-width: 560px; margin: 1.8rem auto 0; color: var(--muted); font-size: 1rem; line-height: 1.7; font-weight: 300; animation: fadeUp .9s .2s ease both; }
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2.5rem; animation: fadeUp .9s .3s ease both; }
+    .btn-primary-gold { background: var(--gold); color: var(--ink); padding: .82rem 2.1rem; border-radius: 3rem; font-weight: 700; font-size: .92rem; border: none; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: .5rem; }
+    .btn-primary-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,169,110,.35); color: var(--ink); }
+    .btn-outline-paper { background: transparent; color: var(--paper); padding: .82rem 2.1rem; border-radius: 3rem; font-weight: 600; font-size: .92rem; border: 1px solid rgba(245,243,238,.2); cursor: pointer; transition: all .2s; text-decoration: none; }
+    .btn-outline-paper:hover { border-color: var(--paper); background: rgba(245,243,238,.07); color: var(--paper); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; animation: drift 8s ease-in-out infinite alternate; }
+    .orb-1 { width: 380px; height: 380px; background: rgba(42,157,143,.12); top: 10%; left: -8%; animation-duration: 9s; }
+    .orb-2 { width: 260px; height: 260px; background: rgba(200,169,110,.1); top: 30%; right: -5%; animation-duration: 11s; animation-delay: -3s; }
+    .orb-3 { width: 200px; height: 200px; background: rgba(231,111,81,.07); bottom: 15%; left: 20%; animation-duration: 7s; animation-delay: -5s; }
+    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(20px,30px) scale(1.05)} }
+
+    /* FEATURES */
+    .features { padding: 6rem 1.5rem; background: linear-gradient(180deg, var(--ink) 0%, #0f0f18 100%); }
+    .section-label { text-align: center; margin-bottom: 1rem; font-size: .7rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--teal); }
+    .section-title { text-align: center; margin-bottom: 4rem; font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 700; letter-spacing: -.02em; }
+    .feature-card { background: rgba(255,255,255,.03); border: 1px solid rgba(200,169,110,.1); border-radius: 1.25rem; padding: 2rem 1.75rem; transition: all .3s; height: 100%; }
+    .feature-card:hover { background: rgba(255,255,255,.06); border-color: rgba(200,169,110,.3); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+    .feat-icon { width: 48px; height: 48px; border-radius: .75rem; display: grid; place-items: center; font-size: 1.4rem; margin-bottom: 1.2rem; }
+    .feat-icon.gold { background: rgba(200,169,110,.15); }
+    .feat-icon.teal { background: rgba(42,157,143,.15); }
+    .feat-icon.accent { background: rgba(231,111,81,.15); }
+    .feat-title { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+    .feat-body { color: var(--muted); font-size: .87rem; line-height: 1.65; font-weight: 300; }
+
+    /* HOW */
+    .how-section { padding: 6rem 1.5rem; background: #0f0f18; }
+    .step-number { font-family: 'JetBrains Mono', monospace; font-size: .68rem; font-weight: 500; letter-spacing: .12em; color: var(--gold); text-transform: uppercase; margin-bottom: .75rem; }
+    .step-title { font-size: 1.2rem; font-weight: 700; margin-bottom: .5rem; }
+    .step-body { color: var(--muted); font-size: .87rem; line-height: 1.65; font-weight: 300; }
+
+    /* STATS */
+    .stats-section { padding: 4rem 1.5rem; border-top: 1px solid rgba(200,169,110,.1); border-bottom: 1px solid rgba(200,169,110,.1); background: rgba(200,169,110,.03); }
+    .stat-val { font-size: 2.7rem; font-weight: 800; color: var(--gold); letter-spacing: -.03em; line-height: 1; }
+    .stat-label { color: var(--muted); font-size: .83rem; margin-top: .3rem; }
+
+    /* MODAL */
+    .modal-content { background: var(--chat-bg); border: 1px solid var(--border); border-radius: 1.5rem; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,.55); color: var(--ink); }
+    .modal-header { background: var(--ink); border-bottom: 1px solid rgba(200,169,110,.2); padding: 1rem 1.4rem; }
+    .modal-bot-avatar { width: 38px; height: 38px; border-radius: 50%; background: conic-gradient(var(--gold), var(--teal), var(--gold)); display: grid; place-items: center; flex-shrink: 0; }
+    .modal-bot-name { font-size: .92rem; font-weight: 700; color: var(--paper); line-height: 1.1; }
+    .modal-bot-status { font-size: .7rem; color: var(--teal); font-family: 'JetBrains Mono', monospace; }
+
+    /* LANG SWITCHER */
+    .lang-switcher { display: flex; border-radius: .65rem; overflow: hidden; border: 1px solid rgba(200,169,110,.35); flex-shrink: 0; }
+    .lang-btn { background: transparent; color: rgba(245,243,238,.5); border: none; cursor: pointer; padding: .32rem .8rem; font-family: 'Sora','Noto Sans Devanagari',sans-serif; font-size: .74rem; font-weight: 700; transition: all .2s; letter-spacing: .02em; line-height: 1.5; }
+    .lang-btn:first-child { border-right: 1px solid rgba(200,169,110,.2); }
+    .lang-btn.active { background: var(--gold); color: var(--ink); }
+    .lang-btn:hover:not(.active) { background: rgba(200,169,110,.15); color: var(--paper); }
+
+    /* CHAT */
+    #chatWindow { height: 370px; overflow-y: auto; padding: 1.1rem; background: var(--chat-bg); display: flex; flex-direction: column; gap: .65rem; scroll-behavior: smooth; }
+    #chatWindow::-webkit-scrollbar { width: 4px; }
+    #chatWindow::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .msg { display: flex; align-items: flex-end; gap: .5rem; animation: msgIn .3s ease; }
+    @keyframes msgIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .msg.user { flex-direction: row-reverse; }
+    .bubble { max-width: 76%; padding: .62rem .95rem; font-size: .87rem; line-height: 1.65; border-radius: 1.1rem; font-family: 'Sora','Noto Sans Devanagari',sans-serif; }
+    .msg.bot .bubble { background: #fff; color: var(--ink); border-bottom-left-radius: .2rem; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+    .msg.user .bubble { background: var(--ink); color: var(--paper); border-bottom-right-radius: .2rem; }
+    .msg-avatar { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-size: .78rem; }
+    .msg-avatar.bot-av { background: conic-gradient(var(--gold), var(--teal)); }
+    .msg-avatar.user-av { background: var(--muted); color: var(--paper); }
+
+    .typing-dots span { display: inline-block; width: 6px; height: 6px; background: var(--muted); border-radius: 50%; margin: 0 2px; animation: bounce .9s infinite; }
+    .typing-dots span:nth-child(2){animation-delay:.15s} .typing-dots span:nth-child(3){animation-delay:.3s}
+    @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+    /* Suggestion chips */
+    .chip-row { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0 1.1rem .8rem; }
+    .chip { background: rgba(42,157,143,.08); border: 1px solid rgba(42,157,143,.25); color: var(--teal); border-radius: 2rem; padding: .26rem .72rem; font-size: .73rem; font-weight: 600; cursor: pointer; transition: all .2s; font-family: 'Sora','Noto Sans Devanagari',sans-serif; white-space: nowrap; }
+    .chip:hover { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    /* Input */
+    .chat-input-row { padding: .85rem 1.15rem; border-top: 1px solid var(--border); background: #fff; display: flex; gap: .65rem; align-items: flex-end; }
+    #userInput { flex: 1; border: 1.5px solid var(--border); border-radius: .75rem; padding: .58rem .88rem; font-family: 'Sora','Noto Sans Devanagari',sans-serif; font-size: .875rem; resize: none; max-height: 120px; outline: none; color: var(--ink); background: var(--chat-bg); transition: border-color .2s; line-height: 1.55; }
+    #userInput:focus { border-color: var(--teal); }
+    #sendBtn { width: 42px; height: 42px; border-radius: .75rem; background: var(--ink); color: var(--gold); border: none; cursor: pointer; font-size: 1rem; display: grid; place-items: center; transition: all .2s; flex-shrink: 0; }
+    #sendBtn:hover { background: var(--teal); color: #fff; transform: scale(1.05); }
+    #sendBtn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .modal-footer-note { text-align: center; padding: .5rem; font-size: .67rem; color: var(--muted); background: var(--chat-bg); }
+
+    /* FOOTER */
+    footer { padding: 3rem 1.5rem; text-align: center; color: var(--muted); font-size: .82rem; border-top: 1px solid rgba(255,255,255,.06); }
+
+    @media(max-width:768px) { nav{padding:1rem 1.2rem} .nav-links{display:none} }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="brand-dot"></div>
+    <span class="brand-name">Mitra <span>AI</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it Works</a></li>
+    <li><a href="#" data-bs-toggle="modal" data-bs-target="#chatModal" class="nav-cta">Chat Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+  <div class="position-relative z-1">
+    <div class="hero-tag">✦ English &amp; नेपाली · Powered by Claude AI</div>
+    <h1 class="hero-title">
+      Meet <span class="line-gold">Mitra</span><br/>
+      Your <span class="line-teal">Bilingual</span><br/>
+      Companion
+    </h1>
+    <p class="hero-sub">Ask anything in <strong style="color:var(--paper)">English</strong> or <strong style="color:var(--gold)">नेपाली</strong>. Mitra understands your language, your context, and delivers thoughtful answers — instantly.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary-gold" data-bs-toggle="modal" data-bs-target="#chatModal">✦ Start Chatting</a>
+      <a href="#features" class="btn-outline-paper">Explore Features</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section" id="features">
+  <div class="container">
+    <div class="row text-center gy-4">
+      <div class="col-6 col-md-3"><div class="stat-val">2</div><div class="stat-label">Languages: EN + नेपाली</div></div>
+      <div class="col-6 col-md-3"><div class="stat-val">0.5s</div><div class="stat-label">Avg Response Time</div></div>
+      <div class="col-6 col-md-3"><div class="stat-val">100+</div><div class="stat-label">Topics Covered</div></div>
+      <div class="col-6 col-md-3"><div class="stat-val">24/7</div><div class="stat-label">Always Available</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="container">
+    <p class="section-label">Capabilities</p>
+    <h2 class="section-title">Everything you need in one AI</h2>
+    <div class="row g-4">
+      <div class="col-md-4"><div class="feature-card"><div class="feat-icon teal">🇳🇵</div><div class="feat-title">Nepali + English</div><div class="feat-body">Chat in नेपाली or English with a single click. Mitra responds naturally in whichever language you choose.</div></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feat-icon gold">🧠</div><div class="feat-title">Deep Reasoning</div><div class="feat-body">Mitra doesn't just retrieve — it reasons. Multi-step logic and nuanced analysis across any domain.</div></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feat-icon accent">⚡</div><div class="feat-title">Instant Responses</div><div class="feat-body">No waiting. Mitra processes and responds in milliseconds, keeping your flow of thought uninterrupted.</div></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feat-icon gold">💬</div><div class="feat-title">Natural Conversation</div><div class="feat-body">Speak naturally in your own words. Mitra understands context and responds like a thoughtful friend.</div></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feat-icon teal">✍️</div><div class="feat-title">Creative Writing</div><div class="feat-body">Stories, essays, poems, emails — Mitra crafts compelling content in both English and Nepali.</div></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feat-icon accent">🔒</div><div class="feat-title">Private & Safe</div><div class="feat-body">Your conversations stay yours. Mitra is built with responsible AI principles and privacy at its core.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="container">
+    <p class="section-label">Process</p>
+    <h2 class="section-title">How Mitra Works</h2>
+    <div class="row justify-content-center">
+      <div class="col-md-4 text-center mb-4"><div class="step-number">Step 01</div><div class="step-title">Pick Your Language</div><div class="step-body">Click <strong style="color:var(--gold)">EN</strong> or <strong style="color:var(--gold)">नेपाली</strong> in the chat header. Mitra instantly switches to your preferred language.</div></div>
+      <div class="col-md-4 text-center mb-4"><div class="step-number">Step 02</div><div class="step-title">Ask Anything</div><div class="step-body">Type your question naturally. Use the suggestion chips for quick starts or dive straight in.</div></div>
+      <div class="col-md-4 text-center mb-4"><div class="step-number">Step 03</div><div class="step-title">Get Smart Answers</div><div class="step-body">Receive clear answers in your language. Follow up, dig deeper, or switch languages anytime.</div></div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="#" class="btn-primary-gold" data-bs-toggle="modal" data-bs-target="#chatModal">Try Mitra Now ✦</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;color:#f5f3ee;margin-bottom:.5rem;">
+    Mitra <span style="color:var(--gold)">AI</span>
+  </div>
+  Your bilingual intelligent companion — सधैं यहाँ, सधैं सोच्दै।<br/>
+  <small style="margin-top:.5rem;display:block;">Made with <span style="color:var(--gold)">♥</span> in Nepal · Powered by Claude</small>
+</footer>
+
+<!-- ══════════════ CHAT MODAL ══════════════ -->
+<div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:530px;">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <div class="d-flex align-items-center gap-3 flex-grow-1 me-3">
+          <div class="modal-bot-avatar"><span style="font-size:.85rem;color:#fff;">✦</span></div>
+          <div>
+            <div class="modal-bot-name">Mitra AI</div>
+            <div class="modal-bot-status" id="statusText">● Online · English Mode</div>
+          </div>
+        </div>
+        <!-- Language Switcher -->
+        <div class="lang-switcher me-2">
+          <button class="lang-btn active" id="btnEn" onclick="setLang('en')" title="Switch to English">EN</button>
+          <button class="lang-btn" id="btnNp" onclick="setLang('np')" title="नेपालीमा बदल्नुहोस्">नेपाली</button>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div id="chatWindow"></div>
+
+      <div class="chat-input-row">
+        <textarea id="userInput" placeholder="Ask Mitra anything…" rows="1"></textarea>
+        <button id="sendBtn" title="Send">➤</button>
+      </div>
+
+      <div class="modal-footer-note">Mitra AI · English &amp; नेपाली · Powered by Claude</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ═══════════════════════════════════════
+//  LANGUAGE CONFIG
+// ═══════════════════════════════════════
+const LANG = {
+  en: {
+    system: `You are Mitra AI, a warm, witty, and deeply knowledgeable AI assistant.
+Your name "Mitra" means "friend" in Sanskrit and Nepali — embody that spirit in every response.
+The user has selected ENGLISH as their language preference.
+IMPORTANT: Always respond in English only, regardless of what language the user writes in.
+Be concise, clear, and genuinely helpful. Keep a friendly, conversational tone.
+If asked who you are, say you are Mitra AI. Keep replies under 200 words unless more detail is explicitly requested.`,
+    greeting: `Namaste! 🙏 I'm <strong>Mitra</strong>, your AI companion.<br/><br/>I'm in <strong style="color:#2a9d8f">English mode</strong> — ask me anything! Try the suggestions below or type your own question.`,
+    placeholder: "Ask Mitra anything…",
+    status: "● Online · English Mode",
+    chips: ["Tell me a fun fact 🎲", "Help me write an email ✉️", "Explain AI simply 🤖", "What can you do? ✦"],
+    errorNet: "⚠️ <em>Network error. Please check your connection.</em>",
+    errorAPI: "Something went wrong. Please try again.",
+    fallback: "I'm not quite sure how to answer that. Could you try rephrasing?"
+  },
+  np: {
+    system: `तपाईं Mitra AI हुनुहुन्छ — एक मिलनसार, बुद्धिमान र सहयोगी AI साथी।
+"मित्र" को अर्थ नेपालीमा साथी हो — हरेक जवाफमा त्यही भावना देखाउनुहोस्।
+प्रयोगकर्ताले नेपाली भाषा छनोट गरेका छन्।
+महत्वपूर्ण: प्रयोगकर्ताले जुनसुकै भाषामा लेखे पनि, सधैं नेपालीमा मात्र जवाफ दिनुहोस्।
+सरल, स्पष्ट र उपयोगी जवाफ दिनुहोस्। मैत्रीपूर्ण र सहज शैली अपनाउनुहोस्।
+यदि तपाईं को हो भनेर सोधियो भने, भन्नुहोस् — म Mitra AI हुँ।
+जवाफ २०० शब्दभित्र राख्नुहोस् जबसम्म विस्तृत जानकारी नमाँगिएसम्म।`,
+    greeting: `नमस्ते! 🙏 म <strong>मित्र</strong> हुँ — तपाईंको AI साथी।<br/><br/>म <strong style="color:#2a9d8f">नेपाली मोड</strong>मा छु — जे सोध्नुहुन्छ सोध्नुहोस्! तलका सुझावहरू प्रयोग गर्नुहोस् वा आफ्नै प्रश्न लेख्नुहोस्।`,
+    placeholder: "मित्रलाई केही पनि सोध्नुहोस्…",
+    status: "● अनलाइन · नेपाली मोड",
+    chips: ["एउटा रोचक तथ्य भन्नुहोस् 🎲", "इमेल लेख्न मद्दत गर्नुहोस् ✉️", "AI सजिलोसँग बुझाउनुहोस् 🤖", "तपाईं के गर्न सक्नुहुन्छ? ✦"],
+    errorNet: "⚠️ <em>नेटवर्क त्रुटि। कृपया इन्टरनेट जाँच गर्नुहोस्।</em>",
+    errorAPI: "केही गलत भयो। कृपया फेरि प्रयास गर्नुहोस्।",
+    fallback: "मलाई यो प्रश्नको जवाफ दिन अलि गाह्रो भयो। कृपया अर्को तरिकाले सोध्नुहोस्!"
+  }
+};
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let currentLang = 'en';
+let history     = [];
+
+const chatEl    = document.getElementById('chatWindow');
+const inputEl   = document.getElementById('userInput');
+const sendEl    = document.getElementById('sendBtn');
+const statusEl  = document.getElementById('statusText');
+
+// ═══════════════════════════════════════
+//  LANGUAGE SWITCH
+// ═══════════════════════════════════════
+function setLang(lang) {
+  if (currentLang === lang) return;
+  currentLang = lang;
+  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+  document.getElementById('btnNp').classList.toggle('active', lang === 'np');
+  inputEl.placeholder = LANG[lang].placeholder;
+  statusEl.textContent = LANG[lang].status;
+  history = [];
+  initChat();
+  inputEl.focus();
+}
+
+// ═══════════════════════════════════════
+//  INIT CHAT
+// ═══════════════════════════════════════
+function initChat() {
+  chatEl.innerHTML = '';
+  const L = LANG[currentLang];
+  addBotMsg(L.greeting);
+
+  // suggestion chips
+  const row = document.createElement('div');
+  row.className = 'chip-row';
+  L.chips.forEach(label => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.innerHTML = label;
+    b.onclick = () => { inputEl.value = label.replace(/\s[\p{Emoji}]\s*$/u,'').trim(); sendMessage(); };
+    row.appendChild(b);
+  });
+  chatEl.appendChild(row);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+// ═══════════════════════════════════════
+//  MESSAGE RENDERERS
+// ═══════════════════════════════════════
+function addBotMsg(html) {
+  const w = document.createElement('div');
+  w.className = 'msg bot';
+  const av = Object.assign(document.createElement('div'), { className: 'msg-avatar bot-av', textContent: '✦' });
+  const b  = Object.assign(document.createElement('div'), { className: 'bubble', innerHTML: html });
+  w.append(av, b); chatEl.appendChild(w);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+function addUserMsg(text) {
+  const w = document.createElement('div');
+  w.className = 'msg user';
+  const av = Object.assign(document.createElement('div'), { className: 'msg-avatar user-av', textContent: '👤' });
+  const b  = Object.assign(document.createElement('div'), { className: 'bubble', textContent: text });
+  w.append(av, b); chatEl.appendChild(w);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+function showTyping() {
+  const w = document.createElement('div');
+  w.className = 'msg bot'; w.id = 'typing';
+  const av = Object.assign(document.createElement('div'), { className: 'msg-avatar bot-av', textContent: '✦' });
+  const b  = Object.assign(document.createElement('div'), { className: 'bubble', innerHTML: '<span class="typing-dots"><span></span><span></span><span></span></span>' });
+  w.append(av, b); chatEl.appendChild(w);
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+function removeTyping() { document.getElementById('typing')?.remove(); }
+
+function fmt(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code style="background:#f0ede8;padding:1px 5px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:.8em;">$1</code>')
+    .replace(/\n/g,'<br/>');
+}
+
+// ═══════════════════════════════════════
+//  SEND
+// ═══════════════════════════════════════
+async function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text || sendEl.disabled) return;
+
+  // remove chips
+  chatEl.querySelector('.chip-row')?.remove();
+
+  inputEl.value = ''; inputEl.style.height = 'auto';
+  addUserMsg(text);
+  history.push({ role: 'user', content: text });
+
+  showTyping(); sendEl.disabled = true;
+  const L = LANG[currentLang];
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: L.system,
+        messages: history
+      })
+    });
+
+    removeTyping();
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      addBotMsg(`⚠️ <em>${err?.error?.message || L.errorAPI}</em>`);
+      history.pop(); return;
+    }
+
+    const data  = await res.json();
+    const reply = data?.content?.[0]?.text || L.fallback;
+    history.push({ role: 'assistant', content: reply });
+    addBotMsg(fmt(reply));
+
+  } catch {
+    removeTyping();
+    addBotMsg(L.errorNet);
+    history.pop();
+  } finally {
+    sendEl.disabled = false;
+    inputEl.focus();
+  }
+}
+
+// ═══════════════════════════════════════
+//  EVENTS
+// ═══════════════════════════════════════
+sendEl.addEventListener('click', sendMessage);
+
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+inputEl.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+document.getElementById('chatModal').addEventListener('show.bs.modal', () => {
+  history = [];
+  initChat();
+  inputEl.placeholder = LANG[currentLang].placeholder;
+  statusEl.textContent = LANG[currentLang].status;
+});
+</script>
+</body>
+</html>
