@@ -100,8 +100,10 @@
         .message .icon {
             width: 36px;
             height: 36px;
-            border-radius: 6px;
+            border-radius: 8px;
             object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .bubble {
@@ -110,6 +112,7 @@
             font-size: 15px;
             line-height: 1.6;
             max-width: 75%;
+            word-wrap: break-word;
         }
 
         .user .bubble {
@@ -163,7 +166,6 @@
         .on { color: #28a745; }
         .off { color: #ccc; }
 
-        /* Modal */
         #aboutOverlay {
             display: none;
             position: fixed;
@@ -204,8 +206,7 @@
             <div id="status" class="small text-muted">Ready</div>
         </div>
 
-        <div class="chat-box" id="chatBox">
-            </div>
+        <div class="chat-box" id="chatBox"></div>
 
         <div class="input-area">
             <div class="input-container">
@@ -239,8 +240,10 @@
 
 <script>
     let isSpeechEnabled = false;
+    // Your updated AI Icon URL
+    const AI_ICON_URL = "https://raw.githubusercontent.com/ayushacharya05/Mitra/refs/heads/main/images/icon.png";
+    const USER_ICON_URL = "https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-7-512.png";
 
-    // --- Core Logic ---
     function toggleSpeech() {
         isSpeechEnabled = !isSpeechEnabled;
         const btn = document.getElementById("speechToggleBtn");
@@ -273,8 +276,7 @@
     const predefinedAnswers = [
         { "keywords": ["hello", "hi", "hey"], "answer": "Hi! How can I assist you today?\nनमस्ते! म तपाईंलाई आज के सहयोग गर्न सक्छु?" },
         { "keywords": ["who are you", "name"], "answer": "I'm Mitra, your AI friend, created by Ayush Acharya." },
-        { "keywords": ["who developed you", "creator"], "answer": "I was created by Ayush Acharya." },
-        { "keywords": ["joke"], "answer": "Why was the math book sad? Too many problems!" }
+        { "keywords": ["who developed you", "creator"], "answer": "I was created by Ayush Acharya." }
     ];
 
     function getFlexibleAnswer(question) {
@@ -294,11 +296,7 @@
         addMessage("user", query);
         input.value = "";
 
-        let response = getFlexibleAnswer(query);
-        
-        if (!response) {
-            response = await fetchWebSearchResult(query);
-        }
+        let response = getFlexibleAnswer(query) || await fetchWebSearchResult(query);
 
         setTimeout(() => {
             addMessage("ai", response);
@@ -311,24 +309,23 @@
         const msgDiv = document.createElement("div");
         msgDiv.className = `message ${sender}`;
 
-        const icon = sender === "user" 
-            ? "https://cdn1.iconfinder.com/data/icons/mix-color-3/502/Untitled-7-512.png" 
-            : "https://ayushacharya5.com.np/mitra/images/icon.png";
+        const iconUrl = (sender === 'ai') ? AI_ICON_URL : USER_ICON_URL;
 
         msgDiv.innerHTML = `
-            ${sender === 'ai' ? `<img src="${icon}" class="icon">` : ''}
+            ${sender === 'ai' ? `<img src="${iconUrl}" class="icon">` : ''}
             <div class="bubble">${text}</div>
-            ${sender === 'user' ? `<img src="${icon}" class="icon">` : ''}
+            ${sender === 'user' ? `<img src="${iconUrl}" class="icon">` : ''}
         `;
 
         chatBox.appendChild(msgDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // --- Voice Logic ---
     function startVoiceInput() {
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'en-US'; 
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return alert("Browser does not support voice input.");
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
         recognition.onstart = () => document.getElementById('status').innerText = "Listening...";
         recognition.onresult = (event) => {
             document.getElementById("question").value = event.results[0][0].transcript;
@@ -341,12 +338,10 @@
     function speakText(text) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        const hasDevanagari = /[\u0900-\u097F]/.test(text);
-        utterance.lang = hasDevanagari ? 'hi-IN' : 'en-US';
+        utterance.lang = /[\u0900-\u097F]/.test(text) ? 'hi-IN' : 'en-US';
         window.speechSynthesis.speak(utterance);
     }
 
-    // Welcome Message
     window.onload = () => addMessage("ai", "Namaste! I am Mitra. How can I help you today?");
 </script>
 </body>
